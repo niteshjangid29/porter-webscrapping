@@ -64,7 +64,7 @@ def _parse_capacity(capacity_text: str) -> Optional[int]:
 
 class PorterAPI:
     SUPPORTED_CITIES = [
-        "Bangalore", "Mumbai", "Delhi", "Chennai", "Hyderabad", "Pune"
+        "Ahmedabad", "Bangalore", "Chandigarh", "Chennai", "Coimbatore", "Delhi", "Hyderabad", "Indore", "Jaipur", "Kanpur", "Kochi", "Kolkata", "Lucknow", "Ludhiana", "Mumbai", "Nagpur", "Nashik", "Pune", "Surat", "Trivandrum", "Vadodara", "Visakhapatnam"
     ]
     SERVICE_TYPES = ["two_wheelers", "trucks", "packers_and_movers"]
 
@@ -151,11 +151,17 @@ class PorterAPI:
             
             # Alternative approach: Find by text content
             try:
+                requirement_text_map = {
+                    "personal": "Personal User",
+                    "business": "Business User"
+                }
+                target_text = requirement_text_map.get(requirement_type, "Business User")
+                
                 labels = driver.find_elements(By.TAG_NAME, "label")
                 for label in labels:
-                    if "Personal User" in label.text:
+                    if target_text in label.text:
                         label.click()
-                        print("✅ Successfully clicked Personal User label")
+                        print(f"✅ Successfully clicked {target_text} label")
                         time.sleep(1)
                         return True
                         
@@ -167,7 +173,7 @@ class PorterAPI:
                 js_script = """
                 const radioButtons = document.querySelectorAll('input[name="requirement"]');
                 for (let radio of radioButtons) {
-                    if (radio.value === 'personal') {
+                    if (radio.value === '{requirement_type}') {
                         radio.checked = true;
                         radio.dispatchEvent(new Event('change'));
                         return true;
@@ -390,7 +396,7 @@ class PorterAPI:
             
             # Select requirement type
             print("👤 Selecting requirement type...")
-            self.select_requirement_type(driver, wait, "personal")
+            self.select_requirement_type(driver, wait, "business")
             
             # Fill pickup address
             print("📍 Filling pickup address...")
