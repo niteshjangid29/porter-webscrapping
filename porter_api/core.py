@@ -345,17 +345,19 @@ class PorterAPI:
             )
             
         if service_type not in self.SERVICE_TYPES:
-            return self._create_error_response(
-                f"Service type '{service_type}' is not supported 🚛",
-                f"Supported services: {', '.join(self.SERVICE_TYPES)}",
-                "Check your service_type parameter spelling!"
-            )
+            service_type = 'trucks'  # Default to trucks if unsupported
+            # return self._create_error_response(
+            #     f"Service type '{service_type}' is not supported 🚛",
+            #     f"Supported services: {', '.join(self.SERVICE_TYPES)}",
+            #     "Check your service_type parameter spelling!"
+            # )
         
         # Initialize the Selenium driver
         driver = None
         try:
             driver = get_selenium_driver()
             wait = WebDriverWait(driver, 15)
+            waitFormSubmit = WebDriverWait(driver, 30)
             print("🚀 Driver initialized. Navigating to https://porter.in")
 
             driver.get("https://porter.in/")
@@ -439,7 +441,7 @@ class PorterAPI:
             # Submit form
             print("🚀 Submitting form...")
             try:
-                submit_btn = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.FormInput_submit__ea0jJ.FormInput_submit-enabled__DbSnE.FareEstimateForms_submit-container___lB5u')))
+                submit_btn = waitFormSubmit.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.FormInput_submit__ea0jJ.FormInput_submit-enabled__DbSnE.FareEstimateForms_submit-container___lB5u')))
                 submit_btn.click()
             except TimeoutException:
                 return self._create_error_response(
